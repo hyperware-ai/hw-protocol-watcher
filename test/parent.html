@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parent Page - HW Protocol Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #ffffff;
+        }
+        .iframe-container {
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        iframe {
+            width: 100%;
+            height: 400px;
+            border: none;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            background: #e9ecef;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .hw-message {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+        .clear-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>HW Protocol Watcher Test - Parent Page</h1>
+    <p>The iframe below contains test links. Click them to see the protocol handler in action.</p>
+    
+    <div class="iframe-container">
+        <iframe src="iframe-content.html" id="testIframe"></iframe>
+    </div>
+    
+    <div class="log">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h3 style="margin: 0;">Message Log</h3>
+            <button class="clear-btn" onclick="clearLog()">Clear Log</button>
+        </div>
+        <div id="logContainer">
+            <div class="log-entry">Waiting for messages...</div>
+        </div>
+    </div>
+    
+    <script>
+        const logContainer = document.getElementById('logContainer');
+        
+        function addLogEntry(message, isHwMessage = false) {
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${isHwMessage ? 'hw-message' : ''}`;
+            entry.innerHTML = `
+                <strong>[${new Date().toLocaleTimeString()}]</strong> 
+                ${typeof message === 'object' ? JSON.stringify(message, null, 2) : message}
+            `;
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        function clearLog() {
+            logContainer.innerHTML = '<div class="log-entry">Log cleared. Waiting for messages...</div>';
+        }
+        
+        // Listen for messages from the iframe
+        window.addEventListener('message', (event) => {
+            console.log('Received message:', event.data);
+            
+            if (event.data && event.data.type === 'HW_LINK_CLICKED') {
+                addLogEntry(`HW Protocol Link Clicked: ${event.data.url}`, true);
+                
+                // You could handle the protocol here, e.g.:
+                // - Route to different parts of your app
+                // - Open specific modules
+                // - Pass data to other systems
+                
+            } else {
+                addLogEntry(`Other message: ${JSON.stringify(event.data)}`);
+            }
+        });
+        
+        // Log when iframe loads
+        document.getElementById('testIframe').onload = function() {
+            addLogEntry('Iframe loaded successfully');
+        };
+        
+        addLogEntry('Parent page ready, listening for messages...');
+    </script>
+</body>
+</html>
