@@ -16,6 +16,7 @@ export class HWProtocolWatcher {
     }
 
     document.addEventListener('click', this.handleClick, true);
+    console.log('[hw-protocol-watcher] initialized');
     this.isListening = true;
   }
 
