@@ -1,6 +1,6 @@
 {
   "name": "@hyperware-ai/hw-protocol-watcher",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Event listener for hw:// protocol links that communicates with parent frames",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
